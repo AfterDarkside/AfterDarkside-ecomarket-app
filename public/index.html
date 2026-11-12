@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoMarket Vital - Panel de Consultas</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f9; margin: 0; padding: 20px; color: #333; }
+        h1 { color: #2c3e50; text-align: center; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; justify-content: center; }
+        button { background: #27ae60; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 14px; transition: background 0.3s; }
+        button:hover { background: #219653; }
+        pre { background: #2c3e50; color: #ecf0f1; padding: 15px; border-radius: 5px; overflow-x: auto; min-height: 150px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>EcoMarket Vital - Consultas Avanzadas</h1>
+        <div class="buttons">
+            <button onclick="cargarConsulta('inventario-bajo')">Inventario Bajo</button>
+            <button onclick="cargarConsulta('ranking-empleados')">Ranking Empleados</button>
+            <button onclick="cargarConsulta('compra-cruzada')">Compra Cruzada</button>
+            <button onclick="cargarConsulta('ventas-mensuales')">Ventas Mensuales (CTE)</button>
+        </div>
+        <h3>Resultado (JSON):</h3>
+        <pre id="resultado">Selecciona una consulta arriba...</pre>
+    </div>
+
+    <script>
+        async function cargarConsulta(endpoint) {
+            const pre = document.getElementById('resultado');
+            pre.textContent = "Cargando datos...";
+            try {
+                const response = await fetch(`/api/${endpoint}`);
+                const data = await response.json();
+                pre.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                pre.textContent = "Error al obtener los datos: " + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

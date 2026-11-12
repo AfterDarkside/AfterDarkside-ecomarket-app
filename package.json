@@ -1,0 +1,13 @@
+{
+  "name": "ecomarket-vital",
+  "version": "1.0.0",
+  "description": "Sistema de Gestion EcoMarket Vital",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "mysql2": "^3.9.2"
+  }
+}
