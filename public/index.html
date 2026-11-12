@@ -12,11 +12,13 @@
         button { background: #27ae60; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 14px; transition: background 0.3s; }
         button:hover { background: #219653; }
         pre { background: #2c3e50; color: #ecf0f1; padding: 15px; border-radius: 5px; overflow-x: auto; min-height: 150px; }
+        .status-btn { background: #2980b9; margin-bottom: 15px; display: block; margin-left: auto; margin-right: auto; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>EcoMarket Vital - Consultas Avanzadas</h1>
+        <button class="status-btn" onclick="cargarConsulta('test-db')">Probar Conexión DB</button>
         <div class="buttons">
             <button onclick="cargarConsulta('inventario-bajo')">Inventario Bajo</button>
             <button onclick="cargarConsulta('ranking-empleados')">Ranking Empleados</button>
@@ -33,10 +35,15 @@
             pre.textContent = "Cargando datos...";
             try {
                 const response = await fetch(`/api/${endpoint}`);
-                const data = await response.json();
-                pre.textContent = JSON.stringify(data, null, 2);
+                const text = await response.text();
+                try {
+                    const data = JSON.parse(text);
+                    pre.textContent = JSON.stringify(data, null, 2);
+                } catch (e) {
+                    pre.textContent = "Error: El servidor no devolvió un JSON válido:\n\n" + text;
+                }
             } catch (error) {
-                pre.textContent = "Error al obtener los datos: " + error.message;
+                pre.textContent = "Error de red: " + error.message;
             }
         }
     </script>
