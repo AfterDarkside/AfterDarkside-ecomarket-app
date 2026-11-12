@@ -1,21 +1,40 @@
-// Configuración flexible para local y producción (Vercel)
-const db = mysql.createPool({
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'ecomarket',
-    port: Number(process.env.DB_PORT) || 3305,
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
+// Rutas de la API que consume el frontend
+app.get('/api/inventario-bajo', (req, res) => {
+    db.query('SELECT * FROM productos WHERE stock < 10', (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: err.message });
+        }
+        res.json(results);
+    });
 });
 
-// Verificación de conexión para el pool
-db.getConnection((err, connection) => {
-    if (err) {
-        console.error('Error conectando a la base de datos:', err);
-        return;
-    }
-    console.log('¡Conectado exitosamente a la base de datos!');
-    connection.release();
+app.get('/api/ranking-empleados', (req, res) => {
+    db.query('SELECT * FROM empleados', (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: err.message });
+        }
+        res.json(results);
+    });
+});
+
+app.get('/api/compra-cruzada', (req, res) => {
+    db.query('SELECT * FROM detalle_ventas', (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: err.message });
+        }
+        res.json(results);
+    });
+});
+
+app.get('/api/ventas-mensuales', (req, res) => {
+    db.query('SELECT * FROM ventas', (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: err.message });
+        }
+        res.json(results);
+    });
 });
