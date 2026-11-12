@@ -1,8 +1,29 @@
-// Rutas de la API con manejo de errores en JSON
+const express = require('express');
+const mysql = require('mysql2');
+const path = require('path');
+
+const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Configuración del pool para Filess.io
+const db = mysql.createPool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    port: Number(process.env.DB_PORT) || 3305,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
+});
+
+// Rutas de API explícitas
 app.get('/api/inventario-bajo', (req, res) => {
     db.query('SELECT * FROM productos WHERE stock < 10', (err, results) => {
         if (err) {
-            console.error('Error en SQL:', err);
+            console.error('Error SQL:', err);
             return res.status(500).json({ error: err.message });
         }
         res.json(results);
@@ -12,7 +33,7 @@ app.get('/api/inventario-bajo', (req, res) => {
 app.get('/api/ranking-empleados', (req, res) => {
     db.query('SELECT * FROM empleados', (err, results) => {
         if (err) {
-            console.error('Error en SQL:', err);
+            console.error('Error SQL:', err);
             return res.status(500).json({ error: err.message });
         }
         res.json(results);
@@ -22,7 +43,7 @@ app.get('/api/ranking-empleados', (req, res) => {
 app.get('/api/compra-cruzada', (req, res) => {
     db.query('SELECT * FROM detalle_ventas', (err, results) => {
         if (err) {
-            console.error('Error en SQL:', err);
+            console.error('Error SQL:', err);
             return res.status(500).json({ error: err.message });
         }
         res.json(results);
@@ -32,9 +53,19 @@ app.get('/api/compra-cruzada', (req, res) => {
 app.get('/api/ventas-mensuales', (req, res) => {
     db.query('SELECT * FROM ventas', (err, results) => {
         if (err) {
-            console.error('Error en SQL:', err);
+            console.error('Error SQL:', err);
             return res.status(500).json({ error: err.message });
         }
         res.json(results);
     });
 });
+
+// Solo escuchar en puerto local si no está en Vercel
+if (process.env.NODE_ENV !== 'production') {
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+        console.log(`Servidor local corriendo en http://localhost:${PORT}`);
+    });
+}
+
+module.exports = app;
