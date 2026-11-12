@@ -5,7 +5,6 @@ const path = require('path');
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
 
 // Configuración del pool para Filess.io
 const db = mysql.createPool({
@@ -19,7 +18,7 @@ const db = mysql.createPool({
     queueLimit: 0
 });
 
-// Rutas de API explícitas
+// --- RUTAS DE API PRIMERO ---
 app.get('/api/inventario-bajo', (req, res) => {
     db.query('SELECT * FROM productos WHERE stock < 10', (err, results) => {
         if (err) {
@@ -60,7 +59,10 @@ app.get('/api/ventas-mensuales', (req, res) => {
     });
 });
 
-// Solo escuchar en puerto local si no está en Vercel
+// --- ARCHIVOS ESTÁTICOS AL FINAL ---
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Solo escuchar localmente si no estamos en Vercel
 if (process.env.NODE_ENV !== 'production') {
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => {
